@@ -77,10 +77,10 @@ function removeHeader(bytes: Uint8Array): Uint8Array {
 }
 
 export function decode(bytes: Uint8Array): string {
-    let buf = bytes.slice() 
-    buf = removeHeader(buf)
-    buf = base64.decode(buf)
-    buf = aesDecrypt(buf)
+    let buf: Uint8Array = bytes.slice() 
+    buf = removeHeader(buf) as Uint8Array
+    buf = base64.decode(buf) as Uint8Array
+    buf = aesDecrypt(buf) as Uint8Array
     return bytesToString(buf)
 }
 
@@ -129,7 +129,8 @@ export function humanTime(date: Date): string {
 
 export function downloadData(data: Uint8Array | string, fileName: string): void {
     const a = document.createElement("a")
-    a.setAttribute("href", window.URL.createObjectURL(new Blob([data], {type: "octet/stream"})))
+    const blobData = data instanceof Uint8Array ? new Uint8Array(data) : data
+    a.setAttribute("href", window.URL.createObjectURL(new Blob([blobData], {type: "octet/stream"})))
     a.setAttribute('download', fileName)
     a.setAttribute('style', 'position: fixed; opacity: 0; left: 0; top: 0;')
     document.body.append(a)

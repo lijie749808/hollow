@@ -9,6 +9,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1.0,
     },
     {
+      url: 'https://hollowknightsaveeditor.xyz/silksong',
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.95,
+    },
+    {
       url: 'https://hollowknightsaveeditor.xyz/#instructions',
       lastModified: new Date(),
       changeFrequency: 'monthly',

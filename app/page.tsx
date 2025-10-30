@@ -238,6 +238,29 @@ export default function Home() {
             </div>
           </header>
 
+          {/* Silksong Editor Link */}
+          <div className="bg-gradient-to-r from-red-900/50 to-orange-900/50 backdrop-blur-sm rounded-xl p-6 mb-8 border-2 border-red-500/50 shadow-lg shadow-red-500/20">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="text-4xl">🆕</div>
+                <div>
+                  <h3 className="text-xl font-bold text-white mb-1">
+                    Looking for Silksong Save Editor?
+                  </h3>
+                  <p className="text-red-200">
+                    Try our new visual editor for Hollow Knight: Silksong with advanced features!
+                  </p>
+                </div>
+              </div>
+              <a
+                href="/silksong"
+                className="flex-shrink-0 px-6 py-3 bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-bold rounded-xl transition-all shadow-xl hover:shadow-red-500/50 transform hover:scale-105"
+              >
+                Open Silksong Editor →
+              </a>
+            </div>
+          </div>
+
           {/* Quick Introduction */}
           <div className="bg-purple-900/30 backdrop-blur-sm rounded-xl p-6 mb-8 border border-purple-500/30 text-center">
             <p className="text-purple-100 text-lg leading-relaxed">

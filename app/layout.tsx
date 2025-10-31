@@ -48,6 +48,11 @@ export const metadata: Metadata = {
   publisher: "Hollow Knight Save Editor",
   alternates: {
     canonical: "https://hollowknightsaveeditor.xyz",
+    languages: {
+      'en': "https://hollowknightsaveeditor.xyz",
+      'ar': "https://hollowknightsaveeditor.xyz/ar",
+      'pt': "https://hollowknightsaveeditor.xyz/pt",
+    },
   },
   category: "Gaming Tools",
   applicationName: "Hollow Knight Save Editor",

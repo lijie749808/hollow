@@ -1,11 +1,15 @@
 'use client'
 
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState, useEffect, Suspense } from 'react'
 import { decode, encode, hash, humanTime, downloadData } from '@/lib/crypto'
 import { useHistory } from '@/lib/useHistory'
+import { useTranslation } from '@/lib/useTranslation'
 import Script from 'next/script'
+import LanguageSwitcher from '@/components/LanguageSwitcher'
+import DynamicMeta from '@/components/DynamicMeta'
 
-export default function Home() {
+function HomeContent() {
+  const { locale, t } = useTranslation()
   const [gameFile, setGameFile] = useState('')
   const [gameFileOriginal, setGameFileOriginal] = useState('')
   const [gameFileName, setGameFileName] = useState('')
@@ -141,6 +145,15 @@ export default function Home() {
 
   return (
     <>
+      {/* Dynamic Meta Tags for Multi-language SEO */}
+      <DynamicMeta
+        title={t.home.metaTitle}
+        description={t.home.metaDescription}
+        keywords={t.home.keywords.join(', ')}
+        baseUrl={`https://hollowknightsaveeditor.xyz/${locale === 'en' ? '' : `?lang=${locale}`}`}
+        locale={locale}
+      />
+      
       {/* Structured Data JSON-LD for SEO */}
       <Script
         id="structured-data"
@@ -208,32 +221,37 @@ export default function Home() {
         
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* Compact Hero Section */}
-          <header className="text-center mb-8">
-            <h1 className="text-4xl sm:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 mb-3">
-              Hollow Knight Save Editor
-            </h1>
-            <p className="text-lg text-purple-200 mb-3">
-              Professional Online Save File Editor - 100% Free & Secure
-            </p>
+          <header className="mb-8">
+            <div className="flex justify-end mb-4">
+              <LanguageSwitcher />
+            </div>
+            <div className="text-center">
+              <h1 className="text-4xl sm:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 mb-3">
+                {t.home.title}
+          </h1>
+              <p className="text-lg text-purple-200 mb-3">
+                {t.home.subtitle}
+              </p>
+            </div>
             <div className="flex items-center justify-center gap-4 text-sm text-purple-300">
               <span className="flex items-center gap-1">
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
-                PC & Switch
+                {t.home.badges.pcSwitch}
               </span>
               <span className="flex items-center gap-1">
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
                 </svg>
-                Client-Side
+                {t.home.badges.clientSide}
               </span>
               <span className="flex items-center gap-1">
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M13 7H7v6h6V7z" />
                   <path fillRule="evenodd" d="M7 2a1 1 0 012 0v1h2V2a1 1 0 112 0v1h2a2 2 0 012 2v2h1a1 1 0 110 2h-1v2h1a1 1 0 110 2h-1v2a2 2 0 01-2 2h-2v1a1 1 0 11-2 0v-1H9v1a1 1 0 11-2 0v-1H5a2 2 0 01-2-2v-2H2a1 1 0 110-2h1V9H2a1 1 0 010-2h1V5a2 2 0 012-2h2V2zM5 5h10v10H5V5z" clipRule="evenodd" />
                 </svg>
-                No Installation
+                {t.home.badges.noInstallation}
               </span>
             </div>
           </header>
@@ -245,10 +263,10 @@ export default function Home() {
                 <div className="text-4xl">🆕</div>
                 <div>
                   <h3 className="text-xl font-bold text-white mb-1">
-                    Looking for Silksong Save Editor?
+                    {t.home.silksongPromo.title}
                   </h3>
                   <p className="text-red-200">
-                    Try our new visual editor for Hollow Knight: Silksong with advanced features!
+                    {t.home.silksongPromo.description}
                   </p>
                 </div>
               </div>
@@ -256,7 +274,7 @@ export default function Home() {
                 href="/silksong"
                 className="flex-shrink-0 px-6 py-3 bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-bold rounded-xl transition-all shadow-xl hover:shadow-red-500/50 transform hover:scale-105"
               >
-                Open Silksong Editor →
+                {t.home.silksongPromo.button}
               </a>
             </div>
           </div>
@@ -264,9 +282,7 @@ export default function Home() {
           {/* Quick Introduction */}
           <div className="bg-purple-900/30 backdrop-blur-sm rounded-xl p-6 mb-8 border border-purple-500/30 text-center">
             <p className="text-purple-100 text-lg leading-relaxed">
-              Welcome to the most powerful <strong className="text-purple-300">Hollow Knight save editor</strong> available online. 
-              This professional <strong className="text-purple-300">hollow knight save editor</strong> tool allows you to modify your save files for both PC and Nintendo Switch, 
-              giving you complete control over your game progress, resources, abilities, and more. Start editing in seconds with our intuitive interface!
+              {t.home.quickIntro.content}
             </p>
           </div>
 
@@ -275,12 +291,12 @@ export default function Home() {
             <div className="text-center mb-6">
               <h2 className="text-3xl font-bold text-white mb-2 flex items-center justify-center gap-3">
                 <span className="text-4xl">🎮</span>
-                Start Editing Your Save File
+                {t.home.upload.title}
               </h2>
               <p className="text-purple-100">
-                Upload your Hollow Knight save file to begin customizing your game experience
-              </p>
-            </div>
+                {t.home.upload.description}
+          </p>
+        </div>
             
             <div className="flex flex-col sm:flex-row gap-4 items-center justify-center mb-4">
               <button
@@ -291,7 +307,7 @@ export default function Home() {
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                   </svg>
-                  Select Save File
+                  {t.home.upload.selectFile}
                 </span>
               </button>
               
@@ -305,7 +321,7 @@ export default function Home() {
                 <div className="flex items-center gap-2">
                   <span className="text-2xl">🎯</span>
                   <span className={`font-semibold ${switchMode ? 'text-white' : 'text-purple-300'}`}>
-                    Nintendo Switch Mode
+                    {t.home.upload.switchMode}
                   </span>
                 </div>
               </label>
@@ -316,7 +332,7 @@ export default function Home() {
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span className="text-sm">You can also drag & drop your file anywhere on this page</span>
+                <span className="text-sm">{t.home.upload.dragHint}</span>
               </div>
             </div>
             
@@ -332,26 +348,26 @@ export default function Home() {
           <div className="grid sm:grid-cols-4 gap-3 mb-8">
             <div className="bg-purple-900/30 backdrop-blur-sm rounded-xl p-4 border border-purple-500/30 text-center">
               <div className="text-3xl mb-2">1️⃣</div>
-              <h3 className="text-sm font-bold text-white mb-1">Backup</h3>
-              <p className="text-xs text-purple-300">Save your original file first</p>
+              <h3 className="text-sm font-bold text-white mb-1">{t.home.quickSteps.backup.title}</h3>
+              <p className="text-xs text-purple-300">{t.home.quickSteps.backup.desc}</p>
             </div>
             
             <div className="bg-purple-900/30 backdrop-blur-sm rounded-xl p-4 border border-purple-500/30 text-center">
               <div className="text-3xl mb-2">2️⃣</div>
-              <h3 className="text-sm font-bold text-white mb-1">Upload</h3>
-              <p className="text-xs text-purple-300">Select or drag your save file</p>
+              <h3 className="text-sm font-bold text-white mb-1">{t.home.quickSteps.upload.title}</h3>
+              <p className="text-xs text-purple-300">{t.home.quickSteps.upload.desc}</p>
             </div>
             
             <div className="bg-purple-900/30 backdrop-blur-sm rounded-xl p-4 border border-purple-500/30 text-center">
               <div className="text-3xl mb-2">3️⃣</div>
-              <h3 className="text-sm font-bold text-white mb-1">Edit</h3>
-              <p className="text-xs text-purple-300">Modify your game data</p>
+              <h3 className="text-sm font-bold text-white mb-1">{t.home.quickSteps.edit.title}</h3>
+              <p className="text-xs text-purple-300">{t.home.quickSteps.edit.desc}</p>
             </div>
             
             <div className="bg-purple-900/30 backdrop-blur-sm rounded-xl p-4 border border-purple-500/30 text-center">
               <div className="text-3xl mb-2">4️⃣</div>
-              <h3 className="text-sm font-bold text-white mb-1">Download</h3>
-              <p className="text-xs text-purple-300">Get your modified save</p>
+              <h3 className="text-sm font-bold text-white mb-1">{t.home.quickSteps.download.title}</h3>
+              <p className="text-xs text-purple-300">{t.home.quickSteps.download.desc}</p>
             </div>
           </div>
 
@@ -361,9 +377,9 @@ export default function Home() {
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-2xl font-bold text-white flex items-center gap-2">
                   <span>📄</span>
-                  Editing: {gameFileName}
+                  {t.home.editor.editing}: {gameFileName}
                 </h3>
-                <span className="text-purple-300 text-sm">Powered by Hollow Knight Save Editor</span>
+                <span className="text-purple-300 text-sm">{t.home.editor.poweredBy}</span>
               </div>
               
               <textarea
@@ -371,7 +387,7 @@ export default function Home() {
                 onChange={handleEditorChange}
                 spellCheck={false}
                 className="w-full h-[600px] font-mono text-sm p-6 bg-slate-950/90 text-purple-100 border-2 border-purple-500/50 rounded-xl focus:ring-4 focus:ring-purple-500/50 focus:border-purple-400 resize-none shadow-inner"
-                placeholder="Your save file data will appear here..."
+                placeholder={t.home.editor.placeholder}
               />
               
               <div className="flex flex-wrap gap-4 mt-6">
@@ -383,7 +399,7 @@ export default function Home() {
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
-                    Reset Changes
+                    {t.home.editor.reset}
                   </span>
                 </button>
                 <button
@@ -394,7 +410,7 @@ export default function Home() {
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                     </svg>
-                    Download Plain Text (Switch)
+                    {t.home.editor.downloadSwitch}
                   </span>
                 </button>
                 <button
@@ -405,7 +421,7 @@ export default function Home() {
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                     </svg>
-                    Download Encrypted (PC)
+                    {t.home.editor.downloadPC}
                   </span>
                 </button>
               </div>
@@ -416,126 +432,117 @@ export default function Home() {
           <div className="bg-gradient-to-br from-blue-900/50 to-cyan-900/50 backdrop-blur-sm rounded-2xl shadow-2xl p-8 mb-8 border border-blue-500/50">
             <h2 className="text-3xl font-bold text-white mb-6 flex items-center gap-3">
               <span className="text-4xl">📋</span>
-              Complete Step-by-Step Instructions
+              {t.home.detailedInstructions.title}
             </h2>
             
             <div className="space-y-6">
               <div className="bg-blue-950/40 rounded-xl p-6 border border-blue-500/30">
                 <h3 className="text-xl font-bold text-blue-200 mb-4 flex items-center gap-2">
                   <span className="text-2xl">1️⃣</span>
-                  Create a Backup of Your Save File
+                  {t.home.detailedInstructions.step1.title}
                 </h3>
-                <p className="text-blue-100 mb-3">
-                  Before using this <strong>hollow knight save editor</strong>, always make a backup copy. In your Hollow Knight save folder, 
-                  locate the file named <code className="bg-blue-950 px-2 py-1 rounded text-blue-300">user1.dat</code> (or user2.dat, user3.dat, user4.dat depending on your save slot).
-                </p>
+                {t.home.detailedInstructions.step1.content.map((text, i) => (
+                  <p key={i} className="text-blue-100 mb-3">{text}</p>
+                ))}
                 <p className="text-blue-100">
-                  <strong>Tip:</strong> Rename your original file to something like <code className="bg-blue-950 px-2 py-1 rounded text-blue-300">user1_backup.dat</code> or 
-                  copy it to a safe location on your computer.
+                  <strong>Tip:</strong> {t.home.detailedInstructions.step1.tip}
                 </p>
               </div>
 
               <div className="bg-blue-950/40 rounded-xl p-6 border border-blue-500/30">
                 <h3 className="text-xl font-bold text-blue-200 mb-4 flex items-center gap-2">
                   <span className="text-2xl">2️⃣</span>
-                  Upload Your Save File to the Editor
+                  {t.home.detailedInstructions.step2.title}
                 </h3>
-                <p className="text-blue-100 mb-3">
-                  Click the &quot;Select Save File&quot; button above, or simply drag and drop your save file (e.g., <code className="bg-blue-950 px-2 py-1 rounded text-blue-300">user1.dat</code>) 
-                  anywhere on this page. For Nintendo Switch users, enable &quot;Nintendo Switch Mode&quot; before uploading.
-                </p>
-                <p className="text-blue-100">
-                  The <strong>hollow knight save editor</strong> will automatically decrypt your file and display it as editable JSON data.
-                </p>
+                {t.home.detailedInstructions.step2.content.map((text, i) => (
+                  <p key={i} className="text-blue-100 mb-3">{text}</p>
+                ))}
               </div>
 
               <div className="bg-blue-950/40 rounded-xl p-6 border border-blue-500/30">
                 <h3 className="text-xl font-bold text-blue-200 mb-4 flex items-center gap-2">
                   <span className="text-2xl">3️⃣</span>
-                  Modify Your Game Data
+                  {t.home.detailedInstructions.step3.title}
                 </h3>
-                <p className="text-blue-100 mb-3">
-                  Once loaded, you&apos;ll see JSON with <code className="bg-blue-950 px-2 py-1 rounded text-blue-300">&quot;key&quot;: value</code> pairs. 
-                  Use <kbd className="bg-blue-950 px-2 py-1 rounded text-blue-300 border border-blue-500">Ctrl+F</kbd> (or <kbd className="bg-blue-950 px-2 py-1 rounded text-blue-300 border border-blue-500">Cmd+F</kbd> on Mac) 
-                  to search for specific values.
-                </p>
+                {t.home.detailedInstructions.step3.content.map((text, i) => (
+                  <p key={i} className="text-blue-100 mb-3">{text}</p>
+                ))}
                 <p className="text-blue-100">
-                  <strong>Example:</strong> Search for <code className="bg-blue-950 px-2 py-1 rounded text-blue-300">&quot;geo&quot;</code> and change its value 
-                  to <code className="bg-blue-950 px-2 py-1 rounded text-blue-300">9999</code> to give yourself 9999 geo (currency).
+                  <strong>Example:</strong> {t.home.detailedInstructions.step3.example}
                 </p>
               </div>
 
               <div className="bg-blue-950/40 rounded-xl p-6 border border-blue-500/30">
                 <h3 className="text-xl font-bold text-blue-200 mb-4 flex items-center gap-2">
                   <span className="text-2xl">4️⃣</span>
-                  Download and Replace Your Save File
+                  {t.home.detailedInstructions.step4.title}
                 </h3>
                 <p className="text-blue-100 mb-3">
-                  After making your edits, click the appropriate download button:
+                  {t.home.detailedInstructions.step4.content}
                 </p>
                 <ul className="list-disc list-inside text-blue-100 space-y-2 mb-3 ml-4">
-                  <li><strong>&quot;Download Encrypted (PC)&quot;</strong> for Steam/GOG versions</li>
-                  <li><strong>&quot;Download Plain Text (Switch)&quot;</strong> for Nintendo Switch</li>
+                  {t.home.detailedInstructions.step4.buttons.map((btn, i) => (
+                    <li key={i}>{btn}</li>
+                  ))}
                 </ul>
                 <p className="text-blue-100">
-                  The file will be saved as <code className="bg-blue-950 px-2 py-1 rounded text-blue-300">user1.dat</code>. 
-                  Move this file to your Hollow Knight save folder, replacing the original (that you already backed up!).
+                  {t.home.detailedInstructions.step4.final}
                 </p>
               </div>
 
               <div className="bg-blue-950/40 rounded-xl p-6 border border-blue-500/30">
                 <h3 className="text-xl font-bold text-blue-200 mb-4 flex items-center gap-2">
                   <span className="text-2xl">📁</span>
-                  Where to Find Your Save Folder
+                  {t.home.saveLocationsDetailed.title}
                 </h3>
                 <p className="text-blue-100 mb-4">
-                  The Hollow Knight save folder location varies by operating system and platform. Here are the most common paths:
+                  {t.home.saveLocationsDetailed.intro}
                 </p>
                 
                 <div className="space-y-4">
                   <div className="bg-blue-950/60 rounded-lg p-4 border-l-4 border-blue-400">
                     <h4 className="font-bold text-blue-200 mb-2 flex items-center gap-2">
-                      <span>🪟</span> Windows (Steam/GOG)
+                      <span>🪟</span> {t.home.saveLocationsDetailed.windows.title}
                     </h4>
                     <code className="text-sm text-blue-300 break-all block">
-                      C:\Users\[YourUsername]\AppData\LocalLow\Team Cherry\Hollow Knight\
+                      {t.home.saveLocationsDetailed.windows.path}
                     </code>
                     <p className="text-xs text-blue-300 mt-2">
-                      Press <kbd className="bg-blue-950 px-1 rounded border border-blue-500">Win+R</kbd>, paste the path, and press Enter
+                      {t.home.saveLocationsDetailed.windows.tip}
                     </p>
                   </div>
 
                   <div className="bg-blue-950/60 rounded-lg p-4 border-l-4 border-blue-400">
                     <h4 className="font-bold text-blue-200 mb-2 flex items-center gap-2">
-                      <span>🍎</span> macOS (Steam/GOG)
+                      <span>🍎</span> {t.home.saveLocationsDetailed.mac.title}
                     </h4>
                     <code className="text-sm text-blue-300 break-all block">
-                      ~/Library/Application Support/unity.Team Cherry.Hollow Knight/
+                      {t.home.saveLocationsDetailed.mac.path}
                     </code>
                     <p className="text-xs text-blue-300 mt-2">
-                      Press <kbd className="bg-blue-950 px-1 rounded border border-blue-500">Cmd+Shift+G</kbd> in Finder, paste the path
+                      {t.home.saveLocationsDetailed.mac.tip}
                     </p>
                   </div>
 
                   <div className="bg-blue-950/60 rounded-lg p-4 border-l-4 border-blue-400">
                     <h4 className="font-bold text-blue-200 mb-2 flex items-center gap-2">
-                      <span>🐧</span> Linux (Steam)
+                      <span>🐧</span> {t.home.saveLocationsDetailed.linux.title}
                     </h4>
                     <code className="text-sm text-blue-300 break-all block mb-2">
-                      ~/.config/unity3d/Team Cherry/Hollow Knight/
+                      {t.home.saveLocationsDetailed.linux.path}
                     </code>
-                    <p className="text-xs text-blue-300 mb-2">or (Steam Play/Proton):</p>
+                    <p className="text-xs text-blue-300 mb-2">{t.home.saveLocationsDetailed.linux.altIntro}</p>
                     <code className="text-xs text-blue-300 break-all block">
-                      ~/.local/share/Steam/steamapps/compatdata/367520/pfx/drive_c/users/steamuser/AppData/LocalLow/Team Cherry/Hollow Knight/
+                      {t.home.saveLocationsDetailed.linux.altPath}
                     </code>
                   </div>
 
                   <div className="bg-blue-950/60 rounded-lg p-4 border-l-4 border-blue-400">
                     <h4 className="font-bold text-blue-200 mb-2 flex items-center gap-2">
-                      <span>🎮</span> Nintendo Switch
+                      <span>🎮</span> {t.home.saveLocationsDetailed.switch.title}
                     </h4>
                     <p className="text-sm text-blue-300">
-                      Requires a modded Switch console and save management tools like Checkpoint or JKSV to export/import save files.
+                      {t.home.saveLocationsDetailed.switch.description}
                     </p>
                   </div>
                 </div>
@@ -546,8 +553,7 @@ export default function Home() {
                       <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                     </svg>
                     <span>
-                      <strong>Can&apos;t find your save folder?</strong> Search online for &quot;hollow knight [your OS] [your platform] save file location&quot; 
-                      (e.g., &quot;hollow knight windows steam save file location&quot;). Epic Games Store and Game Pass may have different paths.
+                      {t.home.saveLocationsDetailed.warning}
                     </span>
                   </p>
                 </div>
@@ -560,10 +566,10 @@ export default function Home() {
             <div className="bg-gradient-to-r from-purple-900/50 to-pink-900/50 backdrop-blur-sm rounded-2xl shadow-2xl p-8 mb-8 border border-purple-500/50">
               <h3 className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
                 <span>🕐</span>
-                Recent Edit History
+                {t.home.history.title}
               </h3>
               <p className="text-purple-200 mb-6 text-sm">
-                Click to load a previous edit. Right-click to remove from history. Note: This is not a replacement for proper backups!
+                {t.home.history.description}
               </p>
               <div className="grid gap-3">
                 {history.map((item) => (
@@ -584,7 +590,7 @@ export default function Home() {
                         <div className="font-bold text-purple-300 group-hover:text-purple-200">
                           {item.fileName}
                         </div>
-                        <div className="text-sm text-purple-400">Hash: {item.hash}</div>
+                        <div className="text-sm text-purple-400">{t.home.history.hash}: {item.hash}</div>
                       </div>
                       <div className="text-sm text-purple-400">{humanTime(item.date)}</div>
                     </div>
@@ -597,87 +603,63 @@ export default function Home() {
           {/* Detailed Information Section */}
           <div className="bg-gradient-to-br from-purple-900/60 to-pink-900/60 backdrop-blur-sm rounded-2xl shadow-2xl p-8 mb-12 border border-purple-500/50">
             <h2 className="text-3xl font-bold text-white mb-6">
-              What Can You Edit with This Hollow Knight Save Editor?
+              {t.home.whatCanEdit.title}
             </h2>
             
             <div className="grid md:grid-cols-2 gap-6 mb-6">
               <div>
-                <h3 className="text-xl font-semibold text-purple-200 mb-3">💰 Currency & Resources</h3>
+                <h3 className="text-xl font-semibold text-purple-200 mb-3">{t.home.whatCanEdit.categories.currency.title}</h3>
                 <ul className="space-y-2 text-purple-100">
-                  <li className="flex items-start gap-2">
-                    <span className="text-purple-400">•</span>
-                    <span><strong>Geo</strong> - Modify your in-game currency to any amount</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-purple-400">•</span>
-                    <span><strong>Dream Orbs/Essence</strong> - Adjust your collected essence points</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-purple-400">•</span>
-                    <span><strong>Rancid Eggs</strong> - Change the number of rancid eggs you own</span>
-                  </li>
+                  {t.home.whatCanEdit.categories.currency.items.map((item, i) => (
+                    <li key={i} className="flex items-start gap-2">
+                      <span className="text-purple-400">•</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
               
               <div>
-                <h3 className="text-xl font-semibold text-purple-200 mb-3">❤️ Health & Soul</h3>
+                <h3 className="text-xl font-semibold text-purple-200 mb-3">{t.home.whatCanEdit.categories.health.title}</h3>
                 <ul className="space-y-2 text-purple-100">
-                  <li className="flex items-start gap-2">
-                    <span className="text-purple-400">•</span>
-                    <span><strong>Max Health</strong> - Set your maximum health capacity</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-purple-400">•</span>
-                    <span><strong>Current Health</strong> - Adjust your current health points</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-purple-400">•</span>
-                    <span><strong>Soul Capacity</strong> - Modify your maximum soul reserves</span>
-                  </li>
+                  {t.home.whatCanEdit.categories.health.items.map((item, i) => (
+                    <li key={i} className="flex items-start gap-2">
+                      <span className="text-purple-400">•</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
               
               <div>
-                <h3 className="text-xl font-semibold text-purple-200 mb-3">🎭 Charms & Abilities</h3>
+                <h3 className="text-xl font-semibold text-purple-200 mb-3">{t.home.whatCanEdit.categories.charms.title}</h3>
                 <ul className="space-y-2 text-purple-100">
-                  <li className="flex items-start gap-2">
-                    <span className="text-purple-400">•</span>
-                    <span><strong>Charm Ownership</strong> - Unlock or lock any charm in the game</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-purple-400">•</span>
-                    <span><strong>Charm Notches</strong> - Increase your available charm slots</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-purple-400">•</span>
-                    <span><strong>Equipped Charms</strong> - Modify which charms are currently equipped</span>
-                  </li>
+                  {t.home.whatCanEdit.categories.charms.items.map((item, i) => (
+                    <li key={i} className="flex items-start gap-2">
+                      <span className="text-purple-400">•</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
               
               <div>
-                <h3 className="text-xl font-semibold text-purple-200 mb-3">⚔️ Combat & Skills</h3>
+                <h3 className="text-xl font-semibold text-purple-200 mb-3">{t.home.whatCanEdit.categories.combat.title}</h3>
                 <ul className="space-y-2 text-purple-100">
-                  <li className="flex items-start gap-2">
-                    <span className="text-purple-400">•</span>
-                    <span><strong>Nail Upgrades</strong> - Set your nail upgrade level (0-4)</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-purple-400">•</span>
-                    <span><strong>Spells</strong> - Unlock and upgrade all three spell types</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-purple-400">•</span>
-                    <span><strong>Movement Abilities</strong> - Enable dash, wall jump, double jump, etc.</span>
-                  </li>
+                  {t.home.whatCanEdit.categories.combat.items.map((item, i) => (
+                    <li key={i} className="flex items-start gap-2">
+                      <span className="text-purple-400">•</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
             
             <div className="bg-purple-950/50 rounded-xl p-6 border border-purple-500/30">
-              <h3 className="text-xl font-semibold text-purple-200 mb-3">🗺️ Exploration & Progress</h3>
+              <h3 className="text-xl font-semibold text-purple-200 mb-3">{t.home.whatCanEdit.explorationProgress.title}</h3>
               <p className="text-purple-100 mb-3">
-                With this <strong className="text-purple-300">hollow knight save editor</strong>, you can also modify exploration-related data such as discovered areas, visited rooms, unlocked map sections, boss defeat status, NPC interactions, quest progress, and achievement completion. The editor provides complete control over your game progression, allowing you to jump to any point in the game or simply adjust specific aspects of your playthrough.
+                {t.home.whatCanEdit.explorationProgress.content}
               </p>
             </div>
           </div>
@@ -685,53 +667,54 @@ export default function Home() {
           {/* Technical Details Section */}
           <div className="bg-gradient-to-r from-slate-900/80 to-purple-900/80 backdrop-blur-sm rounded-2xl shadow-2xl p-8 mb-12 border border-purple-500/50">
             <h2 className="text-3xl font-bold text-white mb-6">
-              Technical Details of Our Hollow Knight Save Editor
+              {t.home.technicalDetails.title}
             </h2>
-            <p className="text-purple-100 leading-relaxed mb-4">
-              This <strong className="text-purple-300">hollow knight save editor</strong> is built with modern web technologies including Next.js, TypeScript, and React. All processing happens entirely in your browser - no files are ever uploaded to any server, ensuring complete privacy and security. The tool uses industry-standard AES encryption in ECB mode to handle PC save files, automatically detecting and applying the correct encryption key used by the game.
-            </p>
-            <p className="text-purple-100 leading-relaxed mb-4">
-              For Nintendo Switch saves, the <strong className="text-purple-300">hollow knight save editor</strong> works with plain text JSON files, as Switch saves are not encrypted in the same way. The editor includes automatic format detection, so you don&apos;t need to worry about technical details - just select your platform and the tool handles the rest.
-            </p>
-            <p className="text-purple-100 leading-relaxed">
-              The history management feature uses your browser&apos;s localStorage to keep track of recently edited files, making it easy to switch between multiple save files or restore previous edits. However, remember that clearing your browser data will also clear this history, so always maintain proper backups of your save files outside of this tool.
-            </p>
+            {t.home.technicalDetails.paragraphs.map((paragraph, i) => (
+              <p key={i} className="text-purple-100 leading-relaxed mb-4 last:mb-0">
+                {paragraph}
+              </p>
+            ))}
           </div>
 
           {/* Safety & Legal Section */}
           <div className="bg-gradient-to-br from-red-900/40 to-orange-900/40 backdrop-blur-sm rounded-2xl shadow-2xl p-8 mb-12 border border-red-500/50">
             <h2 className="text-3xl font-bold text-white mb-6 flex items-center gap-3">
               <span className="text-4xl">⚠️</span>
-              Important Safety Information
+              {t.home.safety.title}
             </h2>
             <div className="space-y-4 text-purple-100">
-              <p className="leading-relaxed">
-                <strong className="text-yellow-300">Always backup your original save files!</strong> Before using this <strong>hollow knight save editor</strong>, create a copy of your save files and store them in a safe location. While this tool is designed to be safe and reliable, unexpected issues can occur, and having a backup ensures you won&apos;t lose your progress.
-              </p>
-              <p className="leading-relaxed">
-                <strong className="text-yellow-300">Validate your JSON:</strong> When editing save files manually, ensure your JSON syntax is correct. Invalid JSON will cause the game to fail loading your save. Use the browser&apos;s search function to help locate fields, and double-check your edits before downloading.
-              </p>
-              <p className="leading-relaxed">
-                <strong className="text-yellow-300">Test with caution:</strong> Some extreme modifications (like setting values to impossibly high numbers) might cause unexpected game behavior or crashes. It&apos;s recommended to make small changes first and test them in-game before making extensive modifications.
-              </p>
-              <p className="leading-relaxed">
-                <strong className="text-yellow-300">Educational use:</strong> This <strong>hollow knight save editor</strong> is provided as-is for educational purposes and personal use. Modifying save files is done at your own risk. We are not responsible for any issues that may arise from using this tool.
-              </p>
+              {t.home.safety.paragraphs.map((para, i) => (
+                <p key={i} className="leading-relaxed">
+                  <strong className="text-yellow-300">{para.title}</strong> {para.content}
+                </p>
+              ))}
             </div>
           </div>
 
           {/* Footer */}
           <footer className="text-center text-purple-300 py-8 border-t border-purple-500/30">
             <p className="mb-4 text-lg">
-              <strong className="text-white">Hollow Knight Save Editor</strong> - Free Online Tool
+              <strong className="text-white">{t.home.footer.title}</strong>
             </p>
 
             <p className="text-xs text-purple-400 mt-4">
-              Hollow Knight is a trademark of Team Cherry. This save editor is an independent fan-made tool and is not affiliated with or endorsed by Team Cherry.
+              {t.home.footer.disclaimer}
             </p>
           </footer>
         </div>
-      </div>
+    </div>
     </>
+  )
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+        <div className="text-purple-200 text-lg">Loading...</div>
+      </div>
+    }>
+      <HomeContent />
+    </Suspense>
   )
 }

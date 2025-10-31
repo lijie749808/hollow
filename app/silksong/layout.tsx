@@ -49,6 +49,11 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: "https://hollowknightsaveeditor.xyz/silksong",
+    languages: {
+      'en': "https://hollowknightsaveeditor.xyz/silksong",
+      'ar': "https://hollowknightsaveeditor.xyz/ar/silksong",
+      'pt': "https://hollowknightsaveeditor.xyz/pt/silksong",
+    },
   },
   verification: {
     google: "your-google-verification-code",

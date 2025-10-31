@@ -1,8 +1,12 @@
 'use client'
 
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState, useEffect, Suspense } from 'react'
 import Script from 'next/script'
+import Link from 'next/link'
 import { decode, encode, downloadData } from '@/lib/crypto'
+import { useTranslation } from '@/lib/useTranslation'
+import LanguageSwitcher from '@/components/LanguageSwitcher'
+import DynamicMeta from '@/components/DynamicMeta'
 import { 
   MASTER_TOOL_LIST, 
   MASTER_CREST_LIST, 
@@ -19,7 +23,8 @@ interface SaveData {
   playerData: any
 }
 
-export default function SilksongSaveEditor() {
+function SilksongContent() {
+  const { locale, t } = useTranslation()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [saveData, setSaveData] = useState<SaveData | null>(null)
   const [fileName, setFileName] = useState("")
@@ -414,6 +419,15 @@ export default function SilksongSaveEditor() {
 
   return (
     <>
+      {/* Dynamic Meta Tags for Multi-language SEO */}
+      <DynamicMeta
+        title={t.silksong.metaTitle}
+        description={t.silksong.metaDescription}
+        keywords={t.silksong.keywords.join(', ')}
+        baseUrl={`https://hollowknightsaveeditor.xyz/silksong${locale === 'en' ? '' : `?lang=${locale}`}`}
+        locale={locale}
+      />
+      
       <Script
         id="silksong-jsonld"
         type="application/ld+json"
@@ -435,30 +449,41 @@ export default function SilksongSaveEditor() {
           <div className="fixed inset-0 bg-red-500/30 backdrop-blur-sm z-50 flex items-center justify-center border-4 border-dashed border-red-400">
             <div className="text-center">
               <div className="text-6xl mb-4">📁</div>
-              <div className="text-2xl font-bold text-white">Drop your Silksong save file here</div>
+              <div className="text-2xl font-bold text-white">{t.silksong.upload.dropHint}</div>
             </div>
           </div>
         )}
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <header className="text-center mb-12">
-            <div className="relative inline-block">
-              <h1 className="text-5xl sm:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-300 via-orange-300 to-amber-300 mb-4 drop-shadow-2xl tracking-tight">
-                Hollow Knight Silksong
-              </h1>
-              <div className="text-3xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-red-400 to-pink-400 mb-6">
-                Save Editor
+          <header className="mb-12">
+            <div className="flex justify-between items-center mb-4">
+              <Link 
+                href="/"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-red-900/50 hover:bg-red-800/60 text-red-200 hover:text-white rounded-lg transition-all duration-200 border border-red-500/50 hover:border-red-400/70 font-medium"
+              >
+                {t.silksong.backToHome}
+              </Link>
+              <LanguageSwitcher />
+            </div>
+            <div className="text-center">
+              <div className="relative inline-block">
+                <h1 className="text-5xl sm:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-300 via-orange-300 to-amber-300 mb-4 drop-shadow-2xl tracking-tight">
+                  {t.silksong.title}
+                </h1>
+                <div className="text-3xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-red-400 to-pink-400 mb-6">
+                  {t.silksong.subtitle}
+                </div>
               </div>
             </div>
             <div className="flex items-center justify-center gap-2 text-red-200/90 text-base sm:text-lg">
               <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
               </svg>
-              <span className="font-medium">Complete Visual Editor</span>
+              <span className="font-medium">{t.silksong.headerBadges.complete}</span>
               <span className="text-red-400">•</span>
-              <span className="font-medium">100% Free</span>
+              <span className="font-medium">{t.silksong.headerBadges.free}</span>
               <span className="text-red-400">•</span>
-              <span className="font-medium">Fully Secure</span>
+              <span className="font-medium">{t.silksong.headerBadges.secure}</span>
             </div>
           </header>
 
@@ -475,19 +500,19 @@ export default function SilksongSaveEditor() {
                     <path d="M3 7v3c0 1.657 3.134 3 7 3s7-1.343 7-3V7c0 1.657-3.134 3-7 3S3 8.657 3 7z" />
                     <path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z" />
                   </svg>
-                  PC Support
+                  {t.silksong.badges.pcSupport}
                 </div>
                 <div className="flex items-center gap-2 px-4 py-2 bg-red-500/20 border border-red-400/50 rounded-full text-red-200 text-sm font-semibold">
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z" clipRule="evenodd" />
                   </svg>
-                  Switch Support
+                  {t.silksong.badges.switchSupport}
                 </div>
                 <div className="flex items-center gap-2 px-4 py-2 bg-purple-500/20 border border-purple-400/50 rounded-full text-purple-200 text-sm font-semibold">
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
                   </svg>
-                  Client-Side Only
+                  {t.silksong.badges.clientSide}
                 </div>
               </div>
 
@@ -500,9 +525,9 @@ export default function SilksongSaveEditor() {
                 </div>
 
                 <div>
-                  <h3 className="text-2xl font-bold text-white mb-2">Upload Your Save File</h3>
+                  <h3 className="text-2xl font-bold text-white mb-2">{t.silksong.upload.title}</h3>
                   <p className="text-red-200/80 text-sm max-w-md mx-auto">
-                    Select your .dat save file or drag and drop it anywhere on this page
+                    {t.silksong.upload.description}
                   </p>
                 </div>
 
@@ -513,7 +538,7 @@ export default function SilksongSaveEditor() {
                   <svg className="w-6 h-6 group-hover:animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                   </svg>
-                  <span>Select Save File</span>
+                  <span>{t.silksong.upload.selectButton}</span>
                   <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-white/0 via-white/20 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 </button>
 
@@ -533,7 +558,7 @@ export default function SilksongSaveEditor() {
                       <svg className="w-5 h-5 text-red-300 group-hover:text-red-200" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z" clipRule="evenodd" />
                       </svg>
-                      <span className="font-semibold text-red-200">Nintendo Switch Mode</span>
+                      <span className="font-semibold text-red-200">{t.silksong.upload.switchModeLabel}</span>
                     </div>
                   </label>
                 </div>
@@ -573,10 +598,10 @@ export default function SilksongSaveEditor() {
                     </div>
                     <div className="flex-1">
                       <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-red-200 to-orange-200 bg-clip-text text-transparent">
-                        About This Hollow Knight Silksong Save Editor
+                        {t.silksong.about.title}
                       </h2>
                       <p className="text-red-100/90 leading-relaxed text-base">
-                        Welcome to our professional <strong className="text-red-300 font-semibold">hollow knight silksong save editor</strong>! This free online tool lets you easily modify your Silksong save files with a user-friendly visual interface. Edit Hornet's stats, unlock tools and abilities, manage Crests, adjust currency, and customize your game progression—no JSON knowledge required. Our <strong className="text-red-300 font-semibold">silksong save editor</strong> supports both PC (Steam, GOG, Epic) and Nintendo Switch platforms.
+                        {t.silksong.about.content}
                       </p>
                     </div>
                   </div>
@@ -593,9 +618,9 @@ export default function SilksongSaveEditor() {
                         </svg>
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-lg font-bold text-yellow-200 mb-2">Safety Reminder</h3>
+                        <h3 className="text-lg font-bold text-yellow-200 mb-2">{t.silksong.about.safetyTitle}</h3>
                         <p className="text-yellow-100/90 text-sm leading-relaxed">
-                          Always create a backup copy of your save files before making any modifications! All processing happens entirely in your browser—your data never leaves your computer, ensuring complete privacy and security with this <strong className="text-yellow-200 font-semibold">hollow knight silksong save editor</strong>.
+                          {t.silksong.about.safetyContent}
                         </p>
                       </div>
                     </div>
@@ -605,30 +630,30 @@ export default function SilksongSaveEditor() {
 
               {/* Silksong Save File Locations */}
               <div className="bg-red-900/30 backdrop-blur-sm rounded-xl p-6 mb-8 border border-red-500/30">
-                <h2 className="text-2xl font-bold text-white mb-4">Silksong Save File Locations</h2>
+                <h2 className="text-2xl font-bold text-white mb-4">{t.silksong.locations.title}</h2>
                 <div className="space-y-4">
                   <div>
                     <h3 className="text-xl font-semibold text-red-300 mb-2">🖥️ PC (Windows)</h3>
                     <p className="text-red-100 font-mono text-sm bg-red-950/50 p-3 rounded">
-                      %USERPROFILE%\AppData\LocalLow\Team Cherry\Hollow Knight Silksong\
+                      {t.silksong.locations.windows}
                     </p>
                   </div>
                   <div>
                     <h3 className="text-xl font-semibold text-red-300 mb-2">🍎 macOS</h3>
                     <p className="text-red-100 font-mono text-sm bg-red-950/50 p-3 rounded">
-                      ~/Library/Application Support/unity.Team Cherry.Hollow Knight Silksong/
+                      {t.silksong.locations.mac}
                     </p>
                   </div>
                   <div>
                     <h3 className="text-xl font-semibold text-red-300 mb-2">🐧 Linux</h3>
                     <p className="text-red-100 font-mono text-sm bg-red-950/50 p-3 rounded">
-                      ~/.config/unity3d/Team Cherry/Hollow Knight Silksong/
+                      {t.silksong.locations.linux}
                     </p>
                   </div>
                   <div>
                     <h3 className="text-xl font-semibold text-red-300 mb-2">🎮 Nintendo Switch</h3>
                     <p className="text-red-100 text-sm">
-                      Use tools like JKSV or Checkpoint to extract save data from your Switch. Make sure to enable "Nintendo Switch Mode" when uploading Switch saves.
+                      {t.silksong.locations.switch}
                     </p>
                   </div>
                 </div>
@@ -636,100 +661,73 @@ export default function SilksongSaveEditor() {
 
               {/* How to Use */}
               <div className="bg-red-900/30 backdrop-blur-sm rounded-xl p-6 mb-8 border border-red-500/30">
-                <h2 className="text-2xl font-bold text-white mb-4">How to Use This Hollow Knight Silksong Save Editor</h2>
+                <h2 className="text-2xl font-bold text-white mb-4">{t.silksong.howToUse.title}</h2>
                 <ol className="list-decimal list-inside space-y-3 text-red-100">
-                  <li className="leading-relaxed">
-                    <strong className="text-red-300">Backup your save file</strong> - Make a copy of your original .dat file before editing
-                  </li>
-                  <li className="leading-relaxed">
-                    <strong className="text-red-300">Upload your save</strong> - Click "Select Save File" or drag and drop your .dat file
-                  </li>
-                  <li className="leading-relaxed">
-                    <strong className="text-red-300">Edit with ease</strong> - Use the visual interface to modify stats, unlock abilities, collect items, and more
-                  </li>
-                  <li className="leading-relaxed">
-                    <strong className="text-red-300">Download your modified save</strong> - Click the save button to download your edited .dat file
-                  </li>
-                  <li className="leading-relaxed">
-                    <strong className="text-red-300">Replace the original</strong> - Copy the downloaded file back to your save folder (close the game first!)
-                  </li>
-                  <li className="leading-relaxed">
-                    <strong className="text-red-300">Launch and enjoy</strong> - Start Silksong and continue your adventure with your modifications
-                  </li>
+                  {t.silksong.howToUse.steps.map((step, i) => (
+                    <li key={i} className="leading-relaxed">
+                      {step}
+                    </li>
+                  ))}
                 </ol>
               </div>
 
               {/* Key Features */}
               <div className="bg-red-900/30 backdrop-blur-sm rounded-xl p-6 mb-8 border border-red-500/30">
-                <h2 className="text-2xl font-bold text-white mb-4">Key Features of This Silksong Save Editor</h2>
+                <h2 className="text-2xl font-bold text-white mb-4">{t.silksong.features.title}</h2>
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="p-4 bg-red-950/30 rounded-lg">
-                    <h3 className="text-lg font-semibold text-red-300 mb-2">✨ Visual Interface</h3>
-                    <p className="text-red-100 text-sm">No JSON knowledge required. Edit everything through an intuitive point-and-click interface designed for the <strong>silksong save editor</strong> experience.</p>
+                    <h3 className="text-lg font-semibold text-red-300 mb-2">{t.silksong.features.visual.title}</h3>
+                    <p className="text-red-100 text-sm">{t.silksong.features.visual.desc}</p>
                   </div>
                   <div className="p-4 bg-red-950/30 rounded-lg">
-                    <h3 className="text-lg font-semibold text-red-300 mb-2">🔒 100% Client-Side</h3>
-                    <p className="text-red-100 text-sm">All processing happens in your browser. Your save files never leave your computer, ensuring maximum privacy and security.</p>
+                    <h3 className="text-lg font-semibold text-red-300 mb-2">{t.silksong.features.clientSide.title}</h3>
+                    <p className="text-red-100 text-sm">{t.silksong.features.clientSide.desc}</p>
                   </div>
                   <div className="p-4 bg-red-950/30 rounded-lg">
-                    <h3 className="text-lg font-semibold text-red-300 mb-2">🎮 Cross-Platform</h3>
-                    <p className="text-red-100 text-sm">Works with PC (Steam, GOG, Epic) and Nintendo Switch save files. Just toggle Switch mode for Switch saves.</p>
+                    <h3 className="text-lg font-semibold text-red-300 mb-2">{t.silksong.features.crossPlatform.title}</h3>
+                    <p className="text-red-100 text-sm">{t.silksong.features.crossPlatform.desc}</p>
                   </div>
                   <div className="p-4 bg-red-950/30 rounded-lg">
-                    <h3 className="text-lg font-semibold text-red-300 mb-2">⚡ Comprehensive Editing</h3>
-                    <p className="text-red-100 text-sm">Modify health, silk, currency, tools, Crests, collectables, maps, fast travel, quests, relics, bestiary—everything!</p>
+                    <h3 className="text-lg font-semibold text-red-300 mb-2">{t.silksong.features.comprehensive.title}</h3>
+                    <p className="text-red-100 text-sm">{t.silksong.features.comprehensive.desc}</p>
                   </div>
                   <div className="p-4 bg-red-950/30 rounded-lg">
-                    <h3 className="text-lg font-semibold text-red-300 mb-2">🔍 Advanced JSON Editor</h3>
-                    <p className="text-red-100 text-sm">For power users: direct JSON editing with search functionality and real-time validation.</p>
+                    <h3 className="text-lg font-semibold text-red-300 mb-2">{t.silksong.features.jsonEditor.title}</h3>
+                    <p className="text-red-100 text-sm">{t.silksong.features.jsonEditor.desc}</p>
                   </div>
                   <div className="p-4 bg-red-950/30 rounded-lg">
-                    <h3 className="text-lg font-semibold text-red-300 mb-2">💯 Free Forever</h3>
-                    <p className="text-red-100 text-sm">This <strong>hollow knight silksong save editor</strong> is completely free with no ads, no registration, and no hidden costs.</p>
+                    <h3 className="text-lg font-semibold text-red-300 mb-2">{t.silksong.features.free.title}</h3>
+                    <p className="text-red-100 text-sm">{t.silksong.features.free.desc}</p>
                   </div>
                 </div>
               </div>
 
               {/* Why Choose */}
               <div className="bg-red-900/30 backdrop-blur-sm rounded-xl p-6 mb-8 border border-red-500/30">
-                <h2 className="text-2xl font-bold text-white mb-4">Why Choose This Hollow Knight Silksong Save Editor?</h2>
+                <h2 className="text-2xl font-bold text-white mb-4">{t.silksong.whyChoose.title}</h2>
                 <p className="text-red-100 mb-4 leading-relaxed">
-                  Unlike other save editors that require technical knowledge or risky third-party downloads, our <strong className="text-red-300">hollow knight silksong save editor</strong> runs entirely in your web browser. This means no installation, no malware risk, and no learning curve. Whether you want to experiment with different builds, recover from a difficult section, or simply customize your experience, this tool makes it easy. Our editor supports the complete range of Silksong's game systems including the Crest equipment system, tool upgrades, quest tracking, relic collection, and the comprehensive bestiary—all accessible through an elegant visual interface.
+                  {t.silksong.whyChoose.content}
                 </p>
               </div>
 
               {/* Common Use Cases */}
               <div className="bg-red-900/30 backdrop-blur-sm rounded-xl p-6 mb-8 border border-red-500/30">
-                <h2 className="text-2xl font-bold text-white mb-4">Common Use Cases for This Silksong Save Editor</h2>
+                <h2 className="text-2xl font-bold text-white mb-4">{t.silksong.useCases.title}</h2>
                 <ul className="space-y-3 text-red-100">
-                  <li className="flex items-start gap-3">
-                    <span className="text-red-400 text-xl">•</span>
-                    <span><strong className="text-red-300">Test Different Builds:</strong> Unlock all Crests and tools to experiment with various playstyles without grinding</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-red-400 text-xl">•</span>
-                    <span><strong className="text-red-300">Skip Difficult Sections:</strong> Increase your health and abilities to overcome challenging boss fights or platforming sections</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-red-400 text-xl">•</span>
-                    <span><strong className="text-red-300">Complete Collections:</strong> Unlock all bestiary entries, relics, and collectables for 100% completion</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-red-400 text-xl">•</span>
-                    <span><strong className="text-red-300">Recover Lost Progress:</strong> Restore items or abilities lost due to bugs or mistakes</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-red-400 text-xl">•</span>
-                    <span><strong className="text-red-300">Speed Run Preparation:</strong> Set up ideal starting conditions for speed run attempts</span>
-                  </li>
+                  {t.silksong.useCases.items.map((item, i) => (
+                    <li key={i} className="flex items-start gap-3">
+                      <span className="text-red-400 text-xl">•</span>
+                      <span><strong className="text-red-300">{item.title}:</strong> {item.desc}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
 
               {/* Technical Advantages */}
               <div className="bg-red-900/30 backdrop-blur-sm rounded-xl p-6 mb-8 border border-red-500/30">
-                <h2 className="text-2xl font-bold text-white mb-4">Technical Advantages</h2>
+                <h2 className="text-2xl font-bold text-white mb-4">{t.silksong.technical.title}</h2>
                 <p className="text-red-100 mb-4 leading-relaxed">
-                  Our <strong className="text-red-300">silksong save editor</strong> is built with modern web technologies to ensure reliability and performance. The editor automatically detects whether your save file is from PC (encrypted) or Nintendo Switch (unencrypted) and handles the appropriate decryption. All changes are validated in real-time, preventing corruption of your save files. The visual editor syncs bidirectionally with the JSON editor, allowing you to switch between visual and code-based editing seamlessly. Export options include both game-ready .dat files and human-readable .json files for further analysis or backup purposes.
+                  {t.silksong.technical.content}
                 </p>
               </div>
             </>
@@ -768,10 +766,10 @@ export default function SilksongSaveEditor() {
               <div className="space-y-6">
                 {/* Basic Stats */}
                 <div className="bg-red-900/40 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-red-500/50">
-                  <h2 className="text-3xl font-bold text-white mb-4">Basic Stats</h2>
+                  <h2 className="text-3xl font-bold text-white mb-4">{t.silksong.stats.basic.title}</h2>
                   <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-red-200 mb-2">Health</label>
+                      <label className="block text-red-200 mb-2">{t.silksong.stats.basic.health}</label>
                       <input
                         type="number"
                         value={pd?.maxHealth || 0}
@@ -780,7 +778,7 @@ export default function SilksongSaveEditor() {
                       />
                     </div>
                     <div>
-                      <label className="block text-red-200 mb-2">Silk</label>
+                      <label className="block text-red-200 mb-2">{t.silksong.stats.basic.silk}</label>
                       <input
                         type="number"
                         value={pd?.silkMax || 0}
@@ -789,7 +787,7 @@ export default function SilksongSaveEditor() {
                       />
                     </div>
                     <div>
-                      <label className="block text-red-200 mb-2">Silk Regen Max</label>
+                      <label className="block text-red-200 mb-2">{t.silksong.stats.basic.silk} Regen Max</label>
                       <input
                         type="number"
                         value={pd?.silkRegenMax || 0}
@@ -798,7 +796,7 @@ export default function SilksongSaveEditor() {
                       />
                     </div>
                     <div>
-                      <label className="block text-red-200 mb-2">Rosaries</label>
+                      <label className="block text-red-200 mb-2">{t.silksong.stats.basic.rosaries}</label>
                       <input
                         type="number"
                         value={pd?.geo || 0}
@@ -807,7 +805,7 @@ export default function SilksongSaveEditor() {
                       />
                     </div>
                     <div>
-                      <label className="block text-red-200 mb-2">Shell Shards</label>
+                      <label className="block text-red-200 mb-2">{t.silksong.stats.basic.shards}</label>
                       <input
                         type="number"
                         value={pd?.ShellShards || 0}
@@ -910,7 +908,7 @@ export default function SilksongSaveEditor() {
                 {pd?.Tools && (
                   <div className="bg-red-900/40 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-red-500/50">
                     <div className="flex justify-between items-center mb-4">
-                      <h2 className="text-3xl font-bold text-white">Tools</h2>
+                      <h2 className="text-3xl font-bold text-white">{t.silksong.stats.tools.title}</h2>
                       <button
                         onClick={() => handleSelectAll('tools')}
                         className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg transition-all"
@@ -1045,7 +1043,7 @@ export default function SilksongSaveEditor() {
                 {/* Collectables */}
                 {pd?.Collectables && (
                   <div className="bg-red-900/40 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-red-500/50">
-                    <h2 className="text-3xl font-bold text-white mb-4">Collectables</h2>
+                    <h2 className="text-3xl font-bold text-white mb-4">{t.silksong.stats.collectables.title}</h2>
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {MASTER_COLLECTABLE_LIST.map((masterCollectable, masterIndex) => {
                         const currentCollectable = pd.Collectables.savedData?.find((c: any) => c.Name === masterCollectable.Name)
@@ -1164,7 +1162,7 @@ export default function SilksongSaveEditor() {
                 {/* Relics */}
                 {pd?.Relics && (
                   <div className="bg-red-900/40 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-red-500/50">
-                    <h2 className="text-3xl font-bold text-white mb-4">Relics</h2>
+                    <h2 className="text-3xl font-bold text-white mb-4">{t.silksong.stats.relics.title}</h2>
                     <div className="space-y-3">
                       {MASTER_RELIC_LIST.map((masterRelic, masterIndex) => {
                         const currentRelic = pd.Relics.savedData?.find((r: any) => r.Name === masterRelic.Name)
@@ -1225,7 +1223,7 @@ export default function SilksongSaveEditor() {
                 {/* Quests */}
                 {pd?.QuestCompletionData && (
                   <div className="bg-red-900/40 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-red-500/50">
-                    <h2 className="text-3xl font-bold text-white mb-4">Quests</h2>
+                    <h2 className="text-3xl font-bold text-white mb-4">{t.silksong.stats.quests.title}</h2>
                     <div className="space-y-3">
                       {MASTER_QUEST_LIST.map((masterQuest, masterIndex) => {
                         const currentQuest = pd.QuestCompletionData.savedData?.find((q: any) => q.Name === masterQuest.Name)
@@ -1296,7 +1294,7 @@ export default function SilksongSaveEditor() {
                 {/* Bestiary */}
                 {pd?.EnemyJournalKillData && (
                   <div className="bg-red-900/40 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-red-500/50">
-                    <h2 className="text-3xl font-bold text-white mb-4">Bestiary</h2>
+                    <h2 className="text-3xl font-bold text-white mb-4">{t.silksong.stats.journal.title}</h2>
                     <label className="flex items-center gap-2 p-3 bg-red-950/30 rounded-lg border border-red-500/30 mb-4">
                       <input
                         type="checkbox"
@@ -1374,7 +1372,7 @@ export default function SilksongSaveEditor() {
               <strong className="text-white">Hollow Knight Silksong Save Editor</strong> - Complete Visual Editor Tool
             </p>
             <p className="text-sm text-red-400 mb-4">
-              Back to <a href="/" className="text-red-300 hover:text-red-200 underline">Hollow Knight (Original) Save Editor</a>
+              Back to <Link href="/" className="text-red-300 hover:text-red-200 underline">Hollow Knight (Original) Save Editor</Link>
             </p>
             <p className="text-xs text-red-400">
               Hollow Knight and Silksong are trademarks of Team Cherry. This save editor is an independent fan-made tool and is not affiliated with or endorsed by Team Cherry.
@@ -1383,6 +1381,18 @@ export default function SilksongSaveEditor() {
         </div>
       </div>
     </>
+  )
+}
+
+export default function SilksongSaveEditor() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-red-900 via-orange-900 to-red-900 flex items-center justify-center">
+        <div className="text-red-200 text-lg">Loading...</div>
+      </div>
+    }>
+      <SilksongContent />
+    </Suspense>
   )
 }
 
